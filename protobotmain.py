@@ -1,41 +1,33 @@
 import os
-import discord
 
-#Set all intents to true, I think
-intents = discord.Intents.all()
+import discord
+from discord.ext import commands
+
+# Set all intents to true, I think
+intents_new = discord.Intents.all()
+
+# Set prefix to call bot to >, as well as set intents to the intents from the thing before
+bot = commands.Bot(command_prefix='>', intents=intents_new)
 
 from dotenv import load_dotenv
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-client = discord.Client()
+# on_ready, or on launch
+@bot.event
+async def on_ready():
+    print('Logged on as', bot.user)
+
+# When a member joins, duh
+@bot.event
+async def on_member_join(member):
+    # DMs the member that just joined
+    await member.send(f'Hi {member.name}, welcome to my Discord server!')
+
+# When they use command prefix with name, like >ping
+@bot.command()
+async def ping(ctx):
+    await ctx.send('message')
     
-    
-class MyClient(discord.Client):
-    # on_ready, or on launch
-    async def on_ready(self):
-        print('Logged on as', self.user)
-        
-    # When a member joins, duh
-    async def on_member_join(self, member):
-        print('on_member_join works')
-
-        # DMs the member with a welcome message
-        await member.send(
-            f'Hi {member.name}, welcome to my Discord server!'
-        )
-
-    # Literally whenever a message shows up in the server
-    async def on_message(self, message):
-        print('pingpong works')
-
-        # don't respond to ourselves
-        if message.author == self.user:
-            return
-
-        if message.content == 'ping':
-            await message.channel.send('pong')
-
-client = MyClient(intents=intents)
-client.run(TOKEN)
+bot.run(TOKEN)

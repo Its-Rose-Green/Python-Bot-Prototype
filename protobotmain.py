@@ -31,7 +31,6 @@ async def ping(ctx):
     await ctx.send('pong')
 
 '''TRAVELLING'''
-
 # Reacting to a preset destination in the travel-destinations text channel will DM the reactor and invite
 # to whatever destination server they reacted to.
 
@@ -47,9 +46,10 @@ async def on_raw_reaction_add(payload):
         if (msg.content == 'Windvale'):
             # A link to the Windvale discord will be sent
             await payload.member.send('https://discord.gg/jJ3FetRgVu')
-        
+        if (msg.content == 'HQ'):
+            # A link to the HQ discord will be sent
+            await payload.member.send('https://discord.gg/MVGm6gFS42')
         await msg.remove_reaction(payload.emoji, payload.member)
-
 
 '''TAVERN THINGS'''
 @bot.command()
@@ -107,5 +107,38 @@ async def get_bank_data():
     with open('centralbank.json', 'r') as file:
         users = json.load(file)
     return users
+
+'''FIGHTING'''
+# Turn-taking prototype - fix it up later for our purposes
+@bot.command()
+async def test(ctx, user: discord.Member):
+    turn = 0
+    aut = 5
+    ops = 5
+    userM = user.mention
+    cmam = ctx.message.author.mention
+    if user == cmam:
+        await ctx.send(f"You can't fight yourself {cmam}")
+    else:
+        await ctx.send(f"{cmam} vs {userM}, who will win?")
+        while aut > 0 and ops > 0:
+            # Turn 1
+            if turn == 0:
+                await ctx.send(f"{cmam}: `test`")
+                def check(m):
+                    return m.content == "test" and m.author == ctx.message.author
+                response = await bot.wait_for('message', check = check)
+                if "test" in response.content.lower() and turn == 0:
+                    await ctx.send("a nice test")
+                    turn = turn + 1
+            # Turn 2
+            elif turn == 1:
+                await ctx.send(f"{userM}: `test`")
+                def check(o):
+                    return o.content == "test" and o.author == user
+                response = await bot.wait_for('message', check = check)
+                if "test" in response.content.lower() and turn == 1:
+                    await ctx.send("the test is strong with this one")
+                    turn = turn - 1
 
 bot.run(TOKEN)

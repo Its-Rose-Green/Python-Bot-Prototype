@@ -4,7 +4,7 @@ import sys
 import discord
 import classyjson as cj
 
-from util.setup import getCogs, getConfig
+from util.setup import get_cogs, get_config
 
 
 from discord.ext import commands, tasks
@@ -12,7 +12,7 @@ from discord.ext.commands import Bot
 
 # Get Config
 try:
-    config = getConfig()
+    config = get_config()
 except FileNotFoundError as error:
     sys.exit(error)
 
@@ -22,7 +22,7 @@ intents = discord.Intents.all()
 bot = Bot(command_prefix=config.command_prefix, intents=intents)
 
 # Load Extensions
-extensions = getCogs()
+extensions = get_cogs()
 for item in extensions:
     try:
         bot.load_extension(item)

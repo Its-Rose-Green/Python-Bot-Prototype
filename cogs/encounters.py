@@ -27,9 +27,9 @@ class Encounters(commands.Cog):
     # Possibly could use channel.history to get the last message then compare that timestamp with current
     @commands.command(name="surrender")
     async def surrender(self, context):
-        channelID = context.message.channel
-        if (channelID.name == 'your-encounter'):
-            await channelID.delete()
+        channel_id = context.message.channel
+        if (channel_id.name == 'your-encounter'):
+            await channel_id.delete()
         else:
             return
 

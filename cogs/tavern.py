@@ -16,15 +16,15 @@ class Tavern(commands.Cog):
 
             if Economy is not None: 
                 users = await Economy.get_bank_data()
-                pouchValue = await Economy.get_user_pouch_value(context.author)
+                pouch_value = await Economy.get_user_pouch_value(context.author)
                 cost = amount*2
                 if (str(context.author.id) not in users):
                     return False
 
-                if (pouchValue < cost):
+                if (pouch_value < cost):
                     await context.send("You can't afford this.")
 
-                if (pouchValue >= cost):
+                if (pouch_value >= cost):
                     await context.send("You have purchased " + str(amount) + " " + item + ".")
                     await context.send("Spent " + str(cost) + " coins.")
                     await Economy.subtract_money(context.author, cost)

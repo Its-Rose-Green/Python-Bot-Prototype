@@ -4,7 +4,7 @@ import os
 import classyjson as cj
 
 
-def getConfig(confPath = "./secret.json"):
+def get_config(confPath = "./secret.json"):
     """ Return json from config file
 
         Input:  confPath (Str) path to file
@@ -21,7 +21,7 @@ def getConfig(confPath = "./secret.json"):
     
     return config
     
-def getCogs(): 
+def get_cogs(): 
     """ Return list of Cogs for bot to load
 
         Input:  None

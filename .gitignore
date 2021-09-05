@@ -1,3 +1,4 @@
 .env
 tokens.txt
-test.py
+secret.json
+__pycache__

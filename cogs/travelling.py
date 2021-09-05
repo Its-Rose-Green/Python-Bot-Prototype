@@ -5,11 +5,16 @@ class Travelling(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # Reacting to a preset destination in the travel-destinations text channel will DM the reactor and invite
-    # to whatever destination server they reacted to.
     # TODO: kick the user out of the original server after sending the invite
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
+        """ Allows the user to react on a message that represents a location in the travel-destinations text channel
+        to receive an invite to the discord server related to that
+
+        Input:  payload(discord.RawReactionActionEvent)
+        Output: None
+        """
+
         message_id = payload.message_id
 
         # compares the channel id of the message being reacted to, to every channel in that guild, making sure it only executes when

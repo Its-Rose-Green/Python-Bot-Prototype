@@ -5,6 +5,36 @@ class Encounters(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload):
+        """ When the user to react on a message that represents a dungeon in the dungeons text channel
+        to open a text channel related to that dungeon
+
+        Input:  payload(discord.RawReactionActionEvent)
+        Output: None
+        """
+
+        message_id = payload.message_id
+
+        # compares the channel id of the message being reacted to, to every channel in that guild, making sure it only executes when
+        # the name of the text channel is dungeons
+        if (payload.channel_id == discord.utils.get(self.bot.get_guild(payload.guild_id).channels, name='dungeons').id):
+            msg = await self.bot.get_channel(payload.channel_id).fetch_message(message_id)
+            
+            if (msg.content == 'Spider Nest'):
+                guild = self.bot.get_guild(payload.guild_id)
+                member = payload.member
+                admin_role = discord.utils.get(guild.roles, name="Creator")
+
+                overwrites = {
+                    guild.default_role: discord.PermissionOverwrite(read_messages=False),
+                    member: discord.PermissionOverwrite(read_messages=True),
+                    admin_role: discord.PermissionOverwrite(read_messages=True)
+                }
+                channel = await guild.create_text_channel('encounter-channel', overwrites=overwrites)
+
+            await msg.remove_reaction(payload.emoji, payload.member)
+
     # TO DO: A command to let user escape with an automatic loss or something similar
     # TO DO: A loss counter or some kind of penalty for a loss. Maybe a hit to fame?s
     @commands.command(name="make_channel")
@@ -20,10 +50,10 @@ class Encounters(commands.Cog):
         admin_role = discord.utils.get(guild.roles, name="Creator")
         overwrites = {
             guild.default_role: discord.PermissionOverwrite(read_messages=False),
-            guild.me: discord.PermissionOverwrite(read_messages=True),
+            member: discord.PermissionOverwrite(read_messages=True),
             admin_role: discord.PermissionOverwrite(read_messages=True)
         }
-        channel = await guild.create_text_channel('your-encounter', overwrites=overwrites)
+        channel = await guild.create_text_channel('encounter-channel', overwrites=overwrites)
 
     # TO DO: Surrendering will detract fame from the user
     # TO DO: Timing out will detract HP from the user, possibly KO-ing them
@@ -38,7 +68,7 @@ class Encounters(commands.Cog):
         """
 
         channel_id = context.message.channel
-        if (channel_id.name == 'your-encounter'):
+        if (channel_id.name == 'encounter-channel'):
             await channel_id.delete()
 
     # Turn-taking prototype - fix it up later for our purposes
